@@ -14,10 +14,10 @@ class Program(models.Model):
         (MOKDONG, '목동'),
         (JONGGAK, '종각'),
     ]
-    location = models.CharField(max_length=3, choices=LOCATION_CHOICES)
-    name = models.CharField(max_length=15)
-    price = models.PositiveIntegerField()
-    capacity = models.PositiveSmallIntegerField()
-    date = models.DateField()
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    location = models.CharField(max_length=3, choices=LOCATION_CHOICES, verbose_name='장소')
+    name = models.CharField(max_length=15, verbose_name='수업 종류')
+    price = models.PositiveIntegerField(verbose_name='수업 가격')
+    capacity = models.PositiveSmallIntegerField(verbose_name='수업 정원')
+    date = models.DateField(verbose_name='수업 날짜')
+    start_time = models.TimeField(verbose_name='수업 시작 시간')
+    end_time = models.TimeField(verbose_name='수업 종료 시간')
