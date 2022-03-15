@@ -29,7 +29,7 @@ class CreditUpdateAPIView(UpdateAPIView):
             return Response({'message': '1원 이상의 credit을 입력하십시오.'}, status.HTTP_400_BAD_REQUEST)
 
         months = credit // 100000 + 1
-        valid_date = date.today() - timedelta(days=1) + relativedelta(months=1)
+        valid_date = date.today() - timedelta(days=1) + relativedelta(months=months)
         data = {
             'credit': credit,
             'valid_date': valid_date
