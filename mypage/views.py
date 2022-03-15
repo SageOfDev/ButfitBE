@@ -13,6 +13,13 @@ class CreditCreateAPIView(CreateAPIView):
     queryset = Credit
     serializer_class = CreditCreateSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = {'Location': 'http://127.0.0.1:8000/mypage/credit/%s/' % serializer.data['id']}
+        return Response(serializer.data, status=status.HTTP_303_SEE_OTHER, headers=headers)
+
 
 class CreditUpdateAPIView(UpdateAPIView):
     queryset = Credit

@@ -16,7 +16,7 @@ class Program(models.Model):
     ]
     location = models.CharField(max_length=3, choices=LOCATION_CHOICES, verbose_name='장소')
     name = models.CharField(max_length=15, verbose_name='수업 종류')
-    price = models.PositiveIntegerField(verbose_name='수업 가격')
+    price = models.DecimalField(max_digits=10, decimal_places=3, verbose_name='수업 가격')
     capacity = models.PositiveSmallIntegerField(verbose_name='수업 정원')
     date = models.DateField(verbose_name='수업 날짜')
     start_time = models.TimeField(verbose_name='수업 시작 시간')

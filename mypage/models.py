@@ -9,7 +9,7 @@ class Customer(models.Model):
 
 class Credit(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name='고객')
-    credit = models.PositiveIntegerField(verbose_name='크레딧(원)', null=True)
+    credit = models.DecimalField(max_digits=10, decimal_places=3, verbose_name='크레딧(원)', null=True)
     valid_date = models.DateField(verbose_name='사용 가능 기간', null=True)
 
     created_d = models.DateField(auto_now_add=True, verbose_name='생성 날짜')

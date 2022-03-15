@@ -1,15 +1,17 @@
-from datetime import date
+from decimal import *
+from datetime import date, timedelta
+
 
 from django.db.models import Q
-from django.http import HttpResponseRedirect
 from rest_framework import status
+from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
 
-from booking.models import Booking, Payment
-from booking.serializers import BookingCreateSerializer, PaymentCreateSerializer
-from mypage.models import Customer, Credit
+from booking.models import Booking
+from booking.serializers import BookingCreateSerializer, PaymentCreateSerializer, BookingUpdateSerializer, \
+    PaymentUpdateSerializer
+from mypage.models import Credit
 from program.models import Program
 
 
@@ -69,19 +71,56 @@ class PaymentCreateAPIView(APIView):
                 amount = total_amount
             credit.credit -= amount
             credit.save()
-
+            data['credit'] = credit.id
             data['amount'] = amount
             serializer = PaymentCreateSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
             if total_amount == 0:
                 break
+
         booking.status = Booking.PAID
         booking.save()
         return Response({'message': '예약이 완료되었습니다.'}, status=status.HTTP_201_CREATED)
 
 
+class BookingUpdateAPIView(UpdateAPIView):
+    queryset = Booking
+    serializer_class = BookingUpdateSerializer
 
+    # PATCH method
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        if instance.status != Booking.PAID:
+            return Response({'message': '이미 환불되었거나, 아직 결제되지 않은 예약입니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        date = instance.program.date
+        if date - date.today() > timedelta(2):
+            refund_rate = Decimal(1)
+        elif date - date.today() > timedelta(0):
+            refund_rate = Decimal(0.5)
+        else:
+            return Response({'message': '수업 당일부턴 예약을 취소할 수 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        for payment in instance.payment_set.all():
+            payment_data = {'refund_rate': refund_rate}
+            payment_serializer = PaymentUpdateSerializer(instance=payment, data=payment_data)
+            payment_serializer.is_valid(raise_exception=True)
+            payment_serializer.save()
+            payment.credit.credit += refund_rate * payment.amount
+            payment.credit.save()
+
+        data = {'status': Booking.REFUNDED}
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)

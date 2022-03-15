@@ -16,14 +16,15 @@ class Booking(models.Model):
     customer = models.ForeignKey('mypage.Customer', on_delete=models.CASCADE, verbose_name='회원 휴대폰 번호')
 
     created_dt = models.DateTimeField(auto_now_add=True, verbose_name='예약 생성 시각')
-    modifield_dt = models.DateTimeField(auto_now=True, verbose_name='예약 상태 변경 시각')
+    modified_dt = models.DateTimeField(auto_now=True, verbose_name='예약 상태 변경 시각')
 
 
 # 결제 정보
 class Payment(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, verbose_name='예약 번호')
-    amount = models.PositiveIntegerField(verbose_name='결제 금액')
-    refund_ratio = models.FloatField(null=True, default=None, verbose_name='환불 정책 비율')
+    credit = models.ForeignKey('mypage.Credit', null=True, on_delete=models.SET_NULL, verbose_name='사용된 크레딧 번호')
+    amount = models.DecimalField(max_digits=10, decimal_places=3, verbose_name='결제 금액')
+    refund_rate = models.DecimalField(max_digits=4, decimal_places=3, null=True, default=None, verbose_name='환불 정책률')
 
     created_dt = models.DateTimeField(auto_now_add=True, verbose_name='결제 시각')
     modified_dt = models.DateTimeField(auto_now=True, verbose_name='결제 정보 변경 시각')
