@@ -20,9 +20,20 @@ class BookingCreateSerializer(ModelSerializer):
 
 
 class PaymentCreateSerializer(ModelSerializer):
-    # booking = PrimaryKeyRelatedField(label='예약 번호', queryset=Booking.objects.all())
     refund_ratio = serializers.FloatField(allow_null=True, label='환불 정책 비율', read_only=True)
 
     class Meta:
         model = Payment
         fields = '__all__'
+
+
+class BookingUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = ['status']
+
+
+class PaymentUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ['refund_rate', 'modified_dt']
