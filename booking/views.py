@@ -46,7 +46,6 @@ class BookingCreateAPIView(CreateAPIView):
 
 
 class PaymentCreateAPIView(APIView):
-
     def post(self, request, booking_id):
         booking = Booking.objects.get(id=booking_id)
 
@@ -55,6 +54,7 @@ class PaymentCreateAPIView(APIView):
             Q(valid_date__gte=date.today())
         ).order_by('valid_date', 'credit')
 
+        # 크레딧 점검
         total_credit = 0
         for credit in credit_list:
             total_credit += credit.credit
@@ -66,9 +66,9 @@ class PaymentCreateAPIView(APIView):
         for credit in credit_list:
             if total_amount > credit.credit:
                 amount = credit.credit
-                total_amount -= amount
             else:
                 amount = total_amount
+            total_amount -= amount
             credit.credit -= amount
             credit.save()
             data['credit'] = credit.id
@@ -106,12 +106,13 @@ class BookingUpdateAPIView(UpdateAPIView):
             return Response({'message': '수업 당일부턴 예약을 취소할 수 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
         for payment in instance.payment_set.all():
+            credit = payment.credit
             payment_data = {'refund_rate': refund_rate}
             payment_serializer = PaymentUpdateSerializer(instance=payment, data=payment_data)
             payment_serializer.is_valid(raise_exception=True)
             payment_serializer.save()
-            payment.credit.credit += refund_rate * payment.amount
-            payment.credit.save()
+            credit.credit += refund_rate * payment.amount
+            credit.save()
 
         data = {'status': Booking.REFUNDED}
         serializer = self.get_serializer(instance, data=data, partial=partial)
