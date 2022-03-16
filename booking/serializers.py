@@ -11,7 +11,7 @@ class BookingCreateSerializer(ModelSerializer):
     # 예약 생성시 null은 불가. 반드시 원하는 수업 선택해야함.
     program = serializers.PrimaryKeyRelatedField(allow_null=False, label='수업 번호', queryset=Program.objects.all())
 
-    # 인가기능 구현시 아래코드 수정 필요
+    # TODO 인가기능 구현시 아래코드 수정 필요
     # customer = serializers.PrimaryKeyRelatedField(label='회원 휴대폰 번호', queryset=Customer.objects.all())
 
     class Meta:
