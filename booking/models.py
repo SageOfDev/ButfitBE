@@ -23,7 +23,7 @@ class Booking(models.Model):
 class Payment(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, verbose_name='예약 번호')
     credit = models.ForeignKey('mypage.Credit', null=True, on_delete=models.SET_NULL, verbose_name='사용된 크레딧 번호')
-    amount = models.DecimalField(max_digits=10, decimal_places=3, verbose_name='결제 금액')
+    amount = models.DecimalField(max_digits=10, decimal_places=3, verbose_name='결제 금액(원)')
     refund_rate = models.DecimalField(max_digits=4, decimal_places=3, null=True, default=None, verbose_name='환불 정책률')
 
     created_dt = models.DateTimeField(auto_now_add=True, verbose_name='결제 시각')

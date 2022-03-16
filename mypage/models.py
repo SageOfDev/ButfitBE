@@ -1,6 +1,7 @@
 from django.db import models
 
 
+# TODO 상속 Model 수정
 class Customer(models.Model):
     phone_number = models.CharField(primary_key=True, max_length=13, verbose_name='휴대폰 번호')
     created_d = models.DateField(auto_now_add=True, verbose_name='등록 날짜')

@@ -23,11 +23,17 @@
     "start_time": "10:00:00",
     "end_time": "11:00:00"
 }
+{
+    "location": "DG",
+    "name": "복근",
+    "price": 50000,
+    "capacity": 4,
+    "date": "2022-07-17",
+    "start_time": "10:00:00",
+    "end_time": "11:00:00"
+}
 ```
-
-
-### 2. 크레딧 구매하기
-#### 인증 및 인가 기능
+### 인증 및 인가 기능
 구현하지 못하여서, 관리자 페이지, `Customers`에서 직접 회원을 등록해야 합니다.
 
 > 요청 데이터
@@ -37,7 +43,7 @@
 }
 ```
 
-#### 크레딧 구매
+### 2. 크레딧 구매하기
 실제 거래가 이루어지는 부분이라 멱등성을 지닌 `PUT`메서드를 사용해 중복 결제를 방지하고자 하였습니다.
 1) 크레딧 생성
 - method: 'POST'
@@ -91,3 +97,13 @@
 - method: 'PATCH'
 - url: 'booking/<int:pk>/'
 - 결과: 정책에 따라 'Payment' 인스턴스의 `refund_rate`가 update되고 `Booking` 인스턴스의 `status`가 `환불완료`로 수정됩니다.
+
+### 6. 수업 예약 현황 보기
+1)
+- url: `admin/booking/booking/`
+- 결과: `list_filter`에서 특정 기간, 프로그램, 예약 상태를 필터링 할 수 있습니다.
+- 라이브러리 : `rangefilter`
+
+2)
+- url: `admin/booking/booking/<ing:booking_id>/change/`
+- 결과 : 예약에 사용된 `Payment`들 중 `refund_rate`가 `null`인 인스턴스를 확인함으로써 수업의 크레잇 차감 금액을 예약 내역 별로 볼 수 있습니다.

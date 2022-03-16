@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'booking.apps.BookingConfig',
 
     'rest_framework',
+    'rangefilter',
 
     'django.contrib.admin',
     'django.contrib.auth',
