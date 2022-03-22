@@ -4,3 +4,4 @@ db.sqlite3
 *.pyc
 __pycache__
 identifier.sqlite
+개선하기.md
