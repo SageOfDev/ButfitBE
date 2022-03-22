@@ -13,7 +13,7 @@ class Booking(models.Model):
 
     program = models.ForeignKey('program.Program', null=True, on_delete=models.SET_NULL, verbose_name='수업 번호')
     status = models.CharField(max_length=3, choices=STATUS_CHOICES, default=REQUIRED_TO_PAY, verbose_name='결제 상태')
-    customer = models.ForeignKey('mypage.Customer', on_delete=models.CASCADE, verbose_name='회원 휴대폰 번호')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='회원 휴대폰 번호')
 
     created_dt = models.DateTimeField(auto_now_add=True, verbose_name='예약 생성 시각')
     modified_dt = models.DateTimeField(auto_now=True, verbose_name='예약 상태 변경 시각')

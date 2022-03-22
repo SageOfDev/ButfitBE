@@ -59,7 +59,7 @@ https://go.postman.co/workspace/My-Workspace~8bb714de-4ea9-4607-88bd-8bd83de9d2f
 ```
 ### 회원등록
 인증 인가는 구현하지 못했습니다. 관리자 페이지 `Customers`(아래 url)에서 회원을 추가해주세요.
-- url : `admin/mypage/customer/add/`
+- url : `admin/mypage/custoㅎmer/add/`
 #### 관리자 페이지에서 회원 등록
 ```
 # 예약과정(중복), 환불 과정(환불 불가) 테스트용 계정
