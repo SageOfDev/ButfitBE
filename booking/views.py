@@ -3,7 +3,7 @@ from datetime import date, timedelta
 
 
 from django.db.models import Q
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,12 +12,14 @@ from booking.models import Booking
 from booking.serializers import BookingCreateSerializer, PaymentCreateSerializer, BookingUpdateSerializer, \
     PaymentUpdateSerializer
 from mypage.models import Credit
+from mypage.permissions import IsOwner
 from program.models import Program
 
 
 class BookingCreateAPIView(CreateAPIView):
     queryset = Booking
     serializer_class = BookingCreateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -41,11 +43,17 @@ class BookingCreateAPIView(CreateAPIView):
             return Response({"message": "정원 초과입니다."}, status=status.HTTP_409_CONFLICT)
 
         self.perform_create(serializer)
+        # TODO 아래 절대 경로 바꾸기
         headers = {'Location': 'http://127.0.0.1:8000/booking/%s/payment/' % serializer.data['id']}
         return Response(serializer.data, status=status.HTTP_307_TEMPORARY_REDIRECT, headers=headers)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class PaymentCreateAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+
     def post(self, request, booking_id):
         booking = Booking.objects.get(id=booking_id)
 
@@ -88,6 +96,7 @@ class PaymentCreateAPIView(APIView):
 class BookingUpdateAPIView(UpdateAPIView):
     queryset = Booking
     serializer_class = BookingUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
     # PATCH method
     def update(self, request, *args, **kwargs):
