@@ -1,15 +1,8 @@
 from django.db import models
 
 
-# TODO 상속 Model 수정
-class Customer(models.Model):
-    phone_number = models.CharField(primary_key=True, max_length=13, verbose_name='휴대폰 번호')
-    created_d = models.DateField(auto_now_add=True, verbose_name='등록 날짜')
-    modified_d = models.DateField(auto_now=True, verbose_name='정보 변경 날짜')
-
-
 class Credit(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name='고객')
+    user = models.ForeignKey('auth.User', related_name='credits', on_delete=models.CASCADE, verbose_name='회원')
     credit = models.DecimalField(max_digits=10, decimal_places=3, verbose_name='크레딧(원)', null=True)
     valid_date = models.DateField(verbose_name='사용 가능 기간', null=True)
 

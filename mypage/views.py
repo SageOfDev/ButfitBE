@@ -1,17 +1,19 @@
 from datetime import date, timedelta
 
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.response import Response
 from dateutil.relativedelta import relativedelta
 
 from mypage.models import Credit
+from mypage.permissions import IsOwner
 from mypage.serializers import CreditCreateSerializer, CreditUpdateSerializer
 
 
 class CreditCreateAPIView(CreateAPIView):
     queryset = Credit
     serializer_class = CreditCreateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -20,10 +22,14 @@ class CreditCreateAPIView(CreateAPIView):
         headers = {'Location': 'http://127.0.0.1:8000/mypage/credit/%s/' % serializer.data['id']}
         return Response(serializer.data, status=status.HTTP_303_SEE_OTHER, headers=headers)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class CreditUpdateAPIView(UpdateAPIView):
     queryset = Credit
     serializer_class = CreditUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
     # PUT method
     def update(self, request, *args, **kwargs):

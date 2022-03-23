@@ -10,7 +10,7 @@ class PaymentInline(admin.TabularInline):
 
 class BookingAdmin(admin.ModelAdmin):
     list_filter = (('created_dt', DateRangeFilter), 'program', 'status')
-    list_display = ('id', 'program', 'status', 'customer', 'modified_dt')
+    list_display = ('id', 'program', 'status', 'user', 'modified_dt')
     ordering = ('-id',)
     inlines = [
         PaymentInline,

@@ -12,7 +12,7 @@ class BookingCreateSerializer(ModelSerializer):
     program = serializers.PrimaryKeyRelatedField(allow_null=False, label='수업 번호', queryset=Program.objects.all())
 
     # TODO 인가기능 구현시 아래코드 수정 필요
-    # customer = serializers.PrimaryKeyRelatedField(label='회원 휴대폰 번호', queryset=Customer.objects.all())
+    user = serializers.ReadOnlyField(source='user.name')
 
     class Meta:
         model = Booking

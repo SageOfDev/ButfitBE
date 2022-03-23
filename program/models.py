@@ -21,3 +21,6 @@ class Program(models.Model):
     date = models.DateField(verbose_name='수업 날짜')
     start_time = models.TimeField(verbose_name='수업 시작 시간')
     end_time = models.TimeField(verbose_name='수업 종료 시간')
+
+    def __str__(self):
+        return self.name

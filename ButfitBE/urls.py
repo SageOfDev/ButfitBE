@@ -22,3 +22,7 @@ urlpatterns = [
     path('mypage/', include('mypage.urls')),
     path('booking/', include('booking.urls')),
 ]
+
+urlpatterns += [
+    path('api-auth/', include('rest_framework.urls')),
+]
