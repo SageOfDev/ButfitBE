@@ -17,8 +17,12 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include, re_path
 
-from ButfitBE.settings import base
 from docs.views import schema_view
+
+# admin_site config
+admin.site.site_header = 'Butfit Admin'
+admin.site.site_title = 'Butfit Admin'
+# admin.site.index_title = ''
 
 urlpatterns = [
     path('admin/', admin.site.urls),
