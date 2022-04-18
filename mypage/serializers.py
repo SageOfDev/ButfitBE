@@ -1,10 +1,12 @@
 import re
 
+from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
+from rest_framework.authtoken.models import Token
+from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework.validators import UniqueValidator
 
 from booking.models import Booking
@@ -12,13 +14,13 @@ from mypage.models import Credit
 
 
 class UserCreateSerializer(ModelSerializer):
-    username = serializers.CharField(help_text="'-'를 포함한 번호를 입력해주세요.", validators=[UniqueValidator(queryset=User.objects.all())])
+    username = serializers.CharField(label='Mobile number', help_text="'-'를 포함한 핸드폰 번호를 입력해주세요.", validators=[UniqueValidator(queryset=User.objects.all())])
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', "confirm_password", 'date_joined']
+        fields = ['id', 'username', 'password', "confirm_password"]
 
     def validate_username(self, value):
         p = re.compile(r'010-\d{4}-\d{4}')
@@ -32,6 +34,38 @@ class UserCreateSerializer(ModelSerializer):
         del data['confirm_password']
         data['password'] = make_password(data['password'])
         return data
+
+
+class UserLoginSerializer(Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
+
+    default_error_messages = {
+        'inactive_account': '비활성된 계정입니다.',
+        'fail_to_authenticate': '인증에 실패했습니다.',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(UserLoginSerializer, self).__init__(*args, **kwargs)
+        self.user = None
+
+    def validate(self, data):
+        self.user = authenticate(username=data.get('username'), password=data.get('password'))
+        if self.user:
+            if not self.user.is_active:
+                raise serializers.ValidationError(self.error_messages['inactive_account'])
+            return data
+        else:
+            raise serializers.ValidationError(self.error_messages['fail_to_authenticate'])
+
+
+class TokenSerializer(Serializer):
+    token = serializers.CharField(source='key')
+
+    class Meta:
+        model = Token
+        fields = ['token']
+
 
 
 class CreditCreateSerializer(ModelSerializer):

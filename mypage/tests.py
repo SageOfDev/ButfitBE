@@ -1,3 +1,6 @@
+import json
+
+from django.contrib.auth.models import User
 from django.urls import reverse
 
 from rest_framework.test import APITestCase
@@ -43,3 +46,36 @@ class UserCreateAPIViewTestCase(APITestCase):
         self.client.post(self.url, self.user_data)
         response = self.client.post(self.url, self.user_data)
         self.assertEqual(400, response.status_code)
+
+
+class UserLoginAPIViewTestCase(APITestCase):
+    url = reverse('mypage:login')
+
+    @classmethod
+    def setUpTestData(cls):
+        """
+        셋업 - 유저 생성
+        """
+        cls.user = User.objects.create_user(username='010-1111-1111', password='password')
+
+    def test_authetication_without_password(self):
+        """
+        로그인 - 패스워드 미입력
+        """
+        response = self.client.post(self.url, {'username': self.user.username})
+        self.assertEqual(400, response.status_code)
+
+    def test_authentication_with_wrong_password(self):
+        """
+        로그인 - 틀린 패스워드
+        """
+        response = self.client.post(self.url, {'username': self.user.username, 'password': 'wrong'})
+        self.assertEqual(400, response.status_code)
+
+    def test_authentication(self):
+        """
+        로그인 - 정상 로그인
+        """
+        response = self.client.post(self.url, {'username': '010-1111-1111', 'password': 'password'})
+        self.assertEqual(200, response.status_code)
+        self.assertTrue('token' in json.loads(response.content))

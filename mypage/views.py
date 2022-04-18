@@ -8,7 +8,8 @@ from dateutil.relativedelta import relativedelta
 
 from mypage.models import Credit
 from mypage.permissions import IsOwner
-from mypage.serializers import CreditCreateSerializer, CreditUpdateSerializer, UserCreateSerializer
+from mypage.serializers import CreditCreateSerializer, CreditUpdateSerializer, UserCreateSerializer, \
+    UserLoginSerializer, TokenSerializer
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -33,10 +34,26 @@ class UserCreateAPIView(CreateAPIView):
 class UserLoginAPIView(GenericAPIView):
     authentication_classes = []
     permission_classes = []
+    serializer_class = UserLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.user
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response(
+            data=TokenSerializer(token).data,
+            status=status.HTTP_200_OK,
+        )
 
 
 class UserLogoutAPIView(GenericAPIView):
-    pass
+    qeuryset = Token.objects.all()
+    serializers_class = TokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        serialzer = self.get_serializer(data=request.data)
 
 
 class CreditCreateAPIView(CreateAPIView):
