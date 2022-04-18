@@ -1,13 +1,42 @@
 from datetime import date, timedelta
 
 from rest_framework import status, permissions
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.authtoken.models import Token
+from rest_framework.generics import CreateAPIView, UpdateAPIView, GenericAPIView
 from rest_framework.response import Response
 from dateutil.relativedelta import relativedelta
 
 from mypage.models import Credit
 from mypage.permissions import IsOwner
-from mypage.serializers import CreditCreateSerializer, CreditUpdateSerializer
+from mypage.serializers import CreditCreateSerializer, CreditUpdateSerializer, UserCreateSerializer
+
+
+class UserCreateAPIView(CreateAPIView):
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = UserCreateSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        user = serializer.instance
+        token, created = Token.objects.get_or_create(user=user)
+        data = serializer.data
+        data["token"] = token.key
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class UserLoginAPIView(GenericAPIView):
+    authentication_classes = []
+    permission_classes = []
+
+
+class UserLogoutAPIView(GenericAPIView):
+    pass
 
 
 class CreditCreateAPIView(CreateAPIView):

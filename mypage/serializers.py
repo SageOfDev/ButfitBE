@@ -1,9 +1,37 @@
+import re
+
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
+
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
+from rest_framework.validators import UniqueValidator
 
 from booking.models import Booking
 from mypage.models import Credit
+
+
+class UserCreateSerializer(ModelSerializer):
+    username = serializers.CharField(help_text="'-'를 포함한 번호를 입력해주세요.", validators=[UniqueValidator(queryset=User.objects.all())])
+    password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password', "confirm_password", 'date_joined']
+
+    def validate_username(self, value):
+        p = re.compile(r'010-\d{4}-\d{4}')
+        if p.match(value) is None:
+            raise serializers.ValidationError("잘못된 핸드폰 번호 양식입니다.")
+        return value
+
+    def validate(self, data):
+        if data.get('password', None) != data.get('confirm_password', ''):
+            raise serializers.ValidationError("비밀번호가 일치하지 않습니다.")
+        del data['confirm_password']
+        data['password'] = make_password(data['password'])
+        return data
 
 
 class CreditCreateSerializer(ModelSerializer):

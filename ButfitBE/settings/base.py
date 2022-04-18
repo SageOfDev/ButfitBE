@@ -59,8 +59,9 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rangefilter',
     'rest_framework',
+    'rest_framework.authtoken',
 
-    # MyApps
+    # custom apps
     'program.apps.ProgramConfig',
     'mypage.apps.MypageConfig',
     'booking.apps.BookingConfig',
@@ -153,6 +154,13 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'auth.User'
+
+# DRF
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 # debug_toolbar
 INTERNAL_IPS = [
