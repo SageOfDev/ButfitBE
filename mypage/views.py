@@ -1,13 +1,63 @@
 from datetime import date, timedelta
 
 from rest_framework import status, permissions
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.authtoken.models import Token
+from rest_framework.generics import CreateAPIView, UpdateAPIView, GenericAPIView
 from rest_framework.response import Response
 from dateutil.relativedelta import relativedelta
 
 from mypage.models import Credit
 from mypage.permissions import IsOwner
-from mypage.serializers import CreditCreateSerializer, CreditUpdateSerializer
+from mypage.serializers import CreditCreateSerializer, CreditUpdateSerializer, UserCreateSerializer, \
+    UserLoginSerializer, TokenSerializer
+
+
+class UserCreateAPIView(CreateAPIView):
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = UserCreateSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        user = serializer.instance
+        token, created = Token.objects.get_or_create(user=user)
+        data = serializer.data
+        data["token"] = token.key
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class UserLoginAPIView(GenericAPIView):
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = UserLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.user
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response(
+            data=TokenSerializer(token).data,
+            status=status.HTTP_200_OK,
+        )
+
+
+# 로그아웃 방식 개선 필요 : 헤더에 토큰이 있을 것이므로 굳이 바디에 토큰을 안넣어도 될 거 같다.
+class UserLogoutAPIView(GenericAPIView):
+    queryset = Token.objects.all()
+    serializer_class = TokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        Token.objects.get(key=request.data['token']).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CreditCreateAPIView(CreateAPIView):

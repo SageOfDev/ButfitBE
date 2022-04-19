@@ -3,16 +3,30 @@
 
 ## 환경
 ***
-### postman 환경 
-https://go.postman.co/workspace/My-Workspace~8bb714de-4ea9-4607-88bd-8bd83de9d2f4/collection/19963177-29f5394d-de35-432b-beab-4200a3b48c71?action=share&creator=19963177
 ### admin 계정
 - id: admin
 - password: admin
-### ERD
-프로젝트 폴더 내에 `ERD.png`를 참고해주세요
 
-## 세부 설명
+## 본론
 ***
+### API url
+#### program
+- `/api/program/` (수업 셋팅)
+#### mypage
+- `/api/mypage/join/` (회원가입)
+- `/api/mypage/login/` (로그인)
+- `/api/mypage/logout/` (로그아웃)
+- (크레딧 구매)
+- (예약 리스트 보기)
+#### booking
+- `` (수업 예약)
+- `` (수업 예약 취소)
+#### admin
+- (예약 현황 보기)
+#### API docs url
+- `/api/swagger/`
+
+
 단계마다 설명과 함께 **테스트 데이터**가 있습니다. postman의 example로도 작성해두었으며, 순서대로 따라해주시면 제가 만든 모든 기능을 보실 수 있습니다.
 
 ### 1. 수업 셋팅하기
@@ -59,7 +73,7 @@ https://go.postman.co/workspace/My-Workspace~8bb714de-4ea9-4607-88bd-8bd83de9d2f
 ```
 ### 회원등록
 인증 인가는 구현하지 못했습니다. 관리자 페이지 `Customers`(아래 url)에서 회원을 추가해주세요.
-- url : `admin/mypage/custoㅎmer/add/`
+- url : `admin/mypage/customer/add/`
 #### 관리자 페이지에서 회원 등록
 ```
 # 예약과정(중복), 환불 과정(환불 불가) 테스트용 계정

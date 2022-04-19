@@ -46,22 +46,27 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = [
-    'program.apps.ProgramConfig',
-    'mypage.apps.MypageConfig',
-    'booking.apps.BookingConfig',
-
-    'rest_framework',
-    'rangefilter',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-praty
+    # 'debug_toolbar',
+    'drf_yasg',
+    # 'rangefilter',
+    'rest_framework',
+    'rest_framework.authtoken',
+
+    # custom apps
+    'program.apps.ProgramConfig',
+    'mypage.apps.MypageConfig',
+    'booking.apps.BookingConfig',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,6 +76,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'ButfitBE.urls'
@@ -146,3 +152,20 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'auth.User'
+
+# DRF
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    # 'DEFAULT_RENDERER_CLASSES': [
+    #     'rest_framework.renderers.JSONRenderer',
+    # ],
+}
+
+# debug_toolbar
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+# ]
