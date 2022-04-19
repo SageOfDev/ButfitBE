@@ -59,12 +59,29 @@ class UserLoginSerializer(Serializer):
             raise serializers.ValidationError(self.error_messages['fail_to_authenticate'])
 
 
-class TokenSerializer(Serializer):
+class TokenSerializer(ModelSerializer):
     token = serializers.CharField(source='key')
+
+    default_error_messages = {
+        'inactive_account': '비활성된 계정입니다.',
+        'invalid_credentials': '존재하지 않는 토큰입니다.'
+    }
 
     class Meta:
         model = Token
         fields = ['token']
+
+    def validate_token(self, value):
+        try:
+            user = Token.objects.get(key=value).user
+        except Token.DoesNotExist:
+            raise serializers.ValidationError(self.error_messages['invalid_credentials'])
+
+        if not user.is_active:
+            raise serializers.ValidationError(self.error_messages['inactive_account'])
+
+        return value
+
 
 
 

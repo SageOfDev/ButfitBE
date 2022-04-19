@@ -28,7 +28,7 @@ class UserCreateAPIView(CreateAPIView):
         data["token"] = token.key
 
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class UserLoginAPIView(GenericAPIView):
@@ -49,11 +49,14 @@ class UserLoginAPIView(GenericAPIView):
 
 
 class UserLogoutAPIView(GenericAPIView):
-    qeuryset = Token.objects.all()
-    serializers_class = TokenSerializer
+    queryset = Token.objects.all()
+    serializer_class = TokenSerializer
 
     def post(self, request, *args, **kwargs):
-        serialzer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        Token.objects.get(key=request.data['token']).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CreditCreateAPIView(CreateAPIView):
