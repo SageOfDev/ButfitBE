@@ -55,9 +55,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third-praty
-    'debug_toolbar',
+    # 'debug_toolbar',
     'drf_yasg',
-    'rangefilter',
+    # 'rangefilter',
     'rest_framework',
     'rest_framework.authtoken',
 
@@ -76,7 +76,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'ButfitBE.urls'
@@ -166,6 +166,6 @@ REST_FRAMEWORK = {
 }
 
 # debug_toolbar
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+# ]

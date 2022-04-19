@@ -48,6 +48,7 @@ class UserLoginAPIView(GenericAPIView):
         )
 
 
+# 로그아웃 방식 개선 필요 : 헤더에 토큰이 있을 것이므로 굳이 바디에 토큰을 안넣어도 될 거 같다.
 class UserLogoutAPIView(GenericAPIView):
     queryset = Token.objects.all()
     serializer_class = TokenSerializer

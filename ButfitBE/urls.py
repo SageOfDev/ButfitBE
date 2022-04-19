@@ -8,6 +8,7 @@ from docs.views import schema_view
 admin.site.site_header = 'Butfit Admin'
 admin.site.site_title = 'Butfit Admin'
 # admin.site.index_title = ''
+# admin.site.enable_nav_sidebar = False
 
 api_urls = [
     path('program/', include('program.urls')),
@@ -29,9 +30,9 @@ urlpatterns = [
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns += [
-         # debug_toolbar
-        path('__debug__/', include(debug_toolbar.urls)),
-    ]
+# if settings.DEBUG:
+#     import debug_toolbar
+#     urlpatterns += [
+#          # debug_toolbar
+#         path('__debug__/', include(debug_toolbar.urls)),
+#     ]
