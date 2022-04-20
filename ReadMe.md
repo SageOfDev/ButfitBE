@@ -1,11 +1,7 @@
 # README
 ***
-
-## 환경
-***
-### admin 계정
-- id: admin
-- password: admin
+헬스클럽에서 수업의 생성과 쿠폰 머니의 충전, 이를 이용한 수업 예약을 구현한 프로젝트입니다.
+해당 헬스클럽의 과제로 시작한 프로젝트입니다.
 
 ## 본론
 ***
@@ -16,11 +12,11 @@
 - `/api/mypage/join/` (회원가입)
 - `/api/mypage/login/` (로그인)
 - `/api/mypage/logout/` (로그아웃)
-- (크레딧 구매)
-- (예약 리스트 보기)
+- `/api/mypage/credit/`(크레딧 구매)
+
 #### booking
-- `` (수업 예약)
-- `` (수업 예약 취소)
+- `api/booking/` (수업 예약)
+- `api/booking/{int:pk}/` (수업 예약 취소)
 #### admin
 - (예약 현황 보기)
 #### API docs url
@@ -149,15 +145,15 @@
 
 ### 3. 수업 예약 하기
 1) 예약 생성
-- method: 'POST'
-- url: 'booking/'
+- method: `POST`
+- url: `booking/`
 - 결과: 아래 조건을 만족 시킬 때'결제 대기' 상태의 `Booking` 인스턴스가 생성되고, Redirect로 2) 과정을 실행합니다.
   - 중복 예약은 불가합니다.
   - 현재 결제 완료된 예약이 정원 미만이어야 합니다.
   
 2) 예약 결제 정보 생성
-- method: 'POST'
-- url: 'booking/<int:booking_id>/payment/'
+- method: `POST`
+- url: `booking/<int:booking_id>/payment/`
 - 결과: 아래 순서로 결제를 진행하고, 완료 후엔 `Booking` 인스턴스의 `status`가 '결제 완료'로 수정됩니다.
   - 회원의 사용가능한 크레딧의 총합이 수업의 가격보다 많아야 합니다.
   - 사용 가능 기간이 이른 순(1순위), 크레딧의 값이 적은 순(2순위)으로 크레딧을 차감합니다.
@@ -208,8 +204,8 @@
 ```
 
 ### 4. 수업 예약 취소 하기
-- method: 'PATCH'
-- url: 'booking/<int:pk>/'
+- method: `PATCH`
+- url: `booking/<int:pk>/`
 - 결과: 정책에 따라 'Payment' 인스턴스의 `refund_rate`가 update되고 `Booking` 인스턴스의 `status`가 `환불완료`로 수정됩니다.
 
 #### 요청 데이터
